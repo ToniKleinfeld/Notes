@@ -43,3 +43,7 @@ Thumbs.db
 
 up.sh
 up.bat
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json

@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "notes-8da1a": {
+      "hosting": {
+        "danotes": [
+          "notes-8da1a"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "notes-8da1a"
+  }
+}
