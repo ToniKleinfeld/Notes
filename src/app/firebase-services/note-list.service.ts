@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, OnDestroy } from '@angular/core';
 import { Firestore, collection, doc , collectionData , onSnapshot} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Note } from '../interfaces/note.interface'
@@ -10,27 +10,64 @@ export class NoteListService {
 
   trashNotes: Note[] = [];
   normalNotes: Note[] = [];
-  items$;
 
-  // unsubList;
-  // unsubSingle;
+  // items$;
+  // items;
+
+  unsubNotes;
+  unsubTrash;
+  
 
   firestore: Firestore = inject(Firestore);
 
   constructor() { 
-    this.items$ = collectionData(this.getNotesRef());
 
+    this.unsubNotes = this.subNotesList();
+    this.unsubTrash = this.subTrashList();
 
-    // this.unsubList = onSnapshot(this.getNotesRef(), (list)=>{                
-    //   list.forEach(element => { console.log(element)})
+    //oben auslesen per snapshot ---> gibt ganze liste aus --> z.b element.id --> die id / oder den data() <-- achtung ist ein function! geben wert aus wie collectionData!
+    // unten mit collectionData --> gibt nur das Object aus
+
+    // this.items$ = collectionData(this.getNotesRef())
+    // this.items = this.items$.subscribe((list) => {
+    //   list.forEach(element => {
+    //     console.log(element)
+    //   });
     // });
 
-    // this.unsubSingle = onSnapshot(this.getSingleDocRef('notes', 'saldfhfbds3423'), (element)=>{
-      
-    // });
+  }
 
-    // this.unsubSingle();
-    // this.unsubList();          // Nicht wirklich verstanden was dieses onSnapshot macht , oder ausließt?
+  ngonDestroy(){
+    this.unsubNotes();
+    this.unsubTrash();
+    // this.items.unsubscribe();
+  }
+
+  subTrashList(){
+    return onSnapshot(this.getTrashRef(), (list)=>{         
+      list.forEach(element => {
+        this.trashNotes.push(this.setNoteObject(element.data(),element.id))
+      });
+    });
+  }
+
+  subNotesList(){
+    return onSnapshot(this.getNotesRef(), (list)=>{                
+      list.forEach(element => {
+        this.normalNotes.push(this.setNoteObject(element.data(),element.id) )
+      });
+    });
+  }
+
+  // ---> setzt das gegebene object auf den vorgegeben classen standard , ebenfalls kann man so die ID mitgeben bei onSnapshot
+  setNoteObject(obj:any, id:string):Note {
+    return {
+      id: id,
+      type: obj.type || 'note',
+      title: obj.title || '',
+      content: obj.content || '',
+      marked: obj.marked || false
+    }
   }
 
   getTrashRef(){ 
@@ -41,7 +78,7 @@ export class NoteListService {
     return collection(this.firestore, 'notes') // --> zugriff auf Sammlung "notes"
   }
 
-  getSingleDocRef(collId:string, docID:string){
-    return doc(collection(this.firestore, collId), docID)   // --> Zugriff auf einzeles dokument in der sammlung
-  }
+  // getSingleDocRef(collId:string, docID:string){
+  //   return doc(collection(this.firestore, collId), docID)   // --> Zugriff auf einzeles dokument in der sammlung , varriante von collectionData
+  // }
 }
