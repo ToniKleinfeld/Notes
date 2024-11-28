@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
-import { Firestore, collection, doc , collectionData , onSnapshot} from '@angular/fire/firestore';
+import { Firestore, collection, doc , collectionData , onSnapshot, addDoc} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Note } from '../interfaces/note.interface'
 
@@ -81,4 +81,13 @@ export class NoteListService {
   // getSingleDocRef(collId:string, docID:string){
   //   return doc(collection(this.firestore, collId), docID)   // --> Zugriff auf einzeles dokument in der sammlung , varriante von collectionData
   // }
+
+  async addNote(item:{}){
+    await addDoc(this.getNotesRef(),item).catch(
+      (err) => {console.error(err)}
+    ).then(
+      (test) => { console.log("Document written with ID: ", test?.id); }
+    )  
+  }
+
 }
