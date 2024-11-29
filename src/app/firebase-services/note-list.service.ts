@@ -92,10 +92,31 @@ export class NoteListService {
     // )  
   }
 
-  async updateNote(colId:string,dovId:string,item: {}){
-    await updateDoc(this.getSingleDocRef(colId,dovId),item).catch(
-      (err) => {console.error(err)}
-    )
+  async updateNote(note: Note){
+    if (note.id) {
+      let docRef = this.getColIdfromNote(note);
+      let item =  this.getCleanJson(note);
+      await updateDoc(this.getSingleDocRef(docRef ,note.id),item).catch(
+        (err) => {console.error(err)}
+      )
+    }
+  }
+
+  getCleanJson(note:Note):{} {
+    return {
+      type: note.type,
+      title: note.title,
+      content: note.content,
+      marked: note.marked,
+    }
+  }
+
+  getColIdfromNote(note:Note):string{
+    if (note.type == 'note') {
+      return 'notes'
+    } else {
+      return 'trash'
+    }
   }
 
 }

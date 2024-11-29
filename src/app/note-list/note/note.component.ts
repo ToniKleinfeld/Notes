@@ -20,6 +20,7 @@ export class NoteComponent {
 
   changeMarkedStatus(){
     this.note.marked = !this.note.marked;
+    this.saveNote()
   }
 
   deleteHovered(){
@@ -39,10 +40,12 @@ export class NoteComponent {
 
   moveToTrash(){
     this.note.type = 'trash';
+    this.saveNote()
   }
 
   moveToNotes(){
     this.note.type = 'note';
+    this.saveNote()
   }
 
   deleteNote(){
@@ -50,6 +53,6 @@ export class NoteComponent {
   }
 
   saveNote(){
-    
+    this.noteService.updateNote(this.note);
   }
 }
