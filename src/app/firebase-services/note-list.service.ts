@@ -44,7 +44,8 @@ export class NoteListService {
   }
 
   subTrashList(){
-    return onSnapshot(this.getTrashRef(), (list)=>{         
+    return onSnapshot(this.getTrashRef(), (list)=>{  
+      this.trashNotes = [] ;     
       list.forEach(element => {
         this.trashNotes.push(this.setNoteObject(element.data(),element.id))
       });
@@ -52,7 +53,8 @@ export class NoteListService {
   }
 
   subNotesList(){
-    return onSnapshot(this.getNotesRef(), (list)=>{                
+    return onSnapshot(this.getNotesRef(), (list)=>{ 
+      this.normalNotes = [] ;                
       list.forEach(element => {
         this.normalNotes.push(this.setNoteObject(element.data(),element.id) )
       });
