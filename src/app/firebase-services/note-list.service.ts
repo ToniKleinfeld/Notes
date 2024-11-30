@@ -54,6 +54,11 @@ export class NoteListService {
     });
   }
 
+  // um auf eine Subref zu kommen (Sammlung in einer sammlung)
+  // collection(doc(collection(this.firestore,"notes"), subsammlingsIdhier ), "namederSubsammlung");   <--- anstelle hier unten getNotesRef()
+  // oder :
+  // collection(this.firestore,"notes/subsammlingsIdhier/namederSubsammlung"); <--als "pfad"
+
   subNotesList(){
     const q = query(this.getNotesRef(),orderBy('title'),  limit(50)); // orderBy() und where arbeiten nicht zusammen! --> error /,orderBy('title')
     return onSnapshot(q, (list)=>{ 
