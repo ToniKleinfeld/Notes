@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
-import { Firestore, collection, doc , collectionData , onSnapshot, addDoc, updateDoc} from '@angular/fire/firestore';
+import { Firestore, collection, doc , collectionData , onSnapshot, addDoc, updateDoc, deleteDoc} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Note } from '../interfaces/note.interface'
 
@@ -84,12 +84,24 @@ export class NoteListService {
     return doc(collection(this.firestore, collId), docID)   // --> Zugriff auf einzeles dokument in der sammlung , varriante von collectionData
   }
 
-  async addNote(item:{}){
-    await addDoc(this.getNotesRef(),item).catch(
-      (err) => {console.error(err)}
-      ) //.then(
+  async addNote(item:Note, colId: "notes"|"trash"){
+    if (colId == "notes") {
+      await addDoc(this.getNotesRef(),item).catch(
+        (err) => {console.error(err)}
+        )
+    } else {
+      await addDoc(this.getTrashRef(),item).catch(
+        (err) => {console.error(err)}
+        )
+    }  
+      //.then(
     //   (test) => { console.log("Document written with ID: ", test?.id); }
     // )  
+  }
+
+  async delteNote(collId:"notes"|"trash",docID:string){
+    await deleteDoc(this.getSingleDocRef(collId,docID)).catch(
+      (err) => {console.error(err)})
   }
 
   async updateNote(note: Note){
