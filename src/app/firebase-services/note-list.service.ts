@@ -56,7 +56,7 @@ export class NoteListService {
 
   // um auf eine Subref zu kommen (Sammlung in einer sammlung)
   // collection(doc(collection(this.firestore,"notes"), subsammlingsIdhier ), "namederSubsammlung");   <--- anstelle hier unten getNotesRef()
-  // oder :
+  // oder 
   // collection(this.firestore,"notes/subsammlingsIdhier/namederSubsammlung"); <--als "pfad"
 
   subNotesList(){
