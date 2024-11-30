@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy } from '@angular/core';
-import { Firestore, collection, doc , collectionData , onSnapshot, addDoc, updateDoc, deleteDoc} from '@angular/fire/firestore';
+import { Firestore, collection, doc , collectionData , onSnapshot, addDoc, updateDoc, deleteDoc, orderBy, limit, query, where} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Note } from '../interfaces/note.interface'
 
@@ -10,13 +10,14 @@ export class NoteListService {
 
   trashNotes: Note[] = [];
   normalNotes: Note[] = [];
+  favNotes:Note[] = [];
 
   // items$;
   // items;
 
   unsubNotes;
   unsubTrash;
-  
+  unsubNotesList;
 
   firestore: Firestore = inject(Firestore);
 
@@ -24,7 +25,7 @@ export class NoteListService {
 
     this.unsubNotes = this.subNotesList();
     this.unsubTrash = this.subTrashList();
-
+    this.unsubNotesList = this.subNotesMarkedList();
     //oben auslesen per snapshot ---> gibt ganze liste aus --> z.b element.id --> die id / oder den data() <-- achtung ist ein function! geben wert aus wie collectionData!
     // unten mit collectionData --> gibt nur das Object aus
 
@@ -40,6 +41,7 @@ export class NoteListService {
   ngonDestroy(){
     this.unsubNotes();
     this.unsubTrash();
+    this.unsubNotesList();
     // this.items.unsubscribe();
   }
 
@@ -53,10 +55,21 @@ export class NoteListService {
   }
 
   subNotesList(){
-    return onSnapshot(this.getNotesRef(), (list)=>{ 
+    const q = query(this.getNotesRef(),orderBy('title'),  limit(50)); // orderBy() und where arbeiten nicht zusammen! --> error /,orderBy('title')
+    return onSnapshot(q, (list)=>{ 
       this.normalNotes = [] ;                
       list.forEach(element => {
         this.normalNotes.push(this.setNoteObject(element.data(),element.id) )
+      });
+    });
+  }
+
+  subNotesMarkedList(){
+    const q = query(this.getNotesRef(),where("marked","==",true),  limit(50)); 
+    return onSnapshot(q, (list)=>{ 
+      this.favNotes = [] ;                
+      list.forEach(element => {
+        this.favNotes.push(this.setNoteObject(element.data(),element.id) )
       });
     });
   }
