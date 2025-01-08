@@ -6,7 +6,7 @@ import { Note } from '../interfaces/note.interface'
 @Injectable({
   providedIn: 'root'
 })
-export class NoteListService {
+export class NoteListService implements OnDestroy{
 
   trashNotes: Note[] = [];
   normalNotes: Note[] = [];
@@ -38,7 +38,7 @@ export class NoteListService {
 
   }
 
-  ngonDestroy(){
+  ngOnDestroy(){
     this.unsubNotes();
     this.unsubTrash();
     this.unsubNotesList();
